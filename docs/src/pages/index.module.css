@@ -1,0 +1,90 @@
+/**
+ * CSS files with the .module.css suffix will be treated as CSS modules
+ * and scoped locally.
+ */
+
+.heroBanner {
+  padding: 4rem 2rem;
+  text-align: left; /* Texte aligné à gauche */
+  position: relative;
+  display: flex;
+  align-items: center; /* Centre verticalement */
+  justify-content: space-between; /* Espace entre le texte et l'image */
+  background: linear-gradient(135deg, #F4F4F4, #D7C8A1); /* Dégradé de fond beige sable */
+  overflow: hidden;
+}
+
+@media screen and (max-width: 996px) {
+  .heroBanner {
+    padding: 2rem;
+    flex-direction: column; /* Sur petits écrans, empile les éléments */
+    text-align: center; /* Centre le texte */
+  }
+}
+
+.leftContent {
+  flex: 1;
+  padding-right: 2rem;
+}
+
+.rightImage {
+  flex: 1; /* Cette propriété permet à l'image de prendre toute la place restante */
+  text-align: right;
+}
+
+.rightImage img {
+  width: 50%; /* L'image prendra toute la largeur de son conteneur */
+  height: 100%; /* Assure que l'image couvre toute la hauteur de son conteneur */
+  object-fit: cover; /* Cela permet à l'image de s'étirer pour remplir l'espace sans être déformée */
+  border-radius: 1rem;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.25); /* Ombre plus marquée */
+  transition: transform 0.3s ease;
+}
+
+.rightImage img:hover {
+  transform: scale(1.05); /* Effet de zoom au survol */
+}
+
+.hero__title {
+  font-size: 3rem;
+  color: #2D6A4F; /* Vert forêt foncé */
+  margin-bottom: 1rem;
+}
+
+.hero__subtitle {
+  font-size: 1.5rem;
+  color: #FF6600; /* Orange vif */
+  margin-top: 1rem;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.button {
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.button--primary {
+  background-color: #FF6600; /* Orange vif */
+  color: white;
+  border: none;
+}
+
+.button--primary:hover {
+  background-color: #2D6A4F; /* Vert forêt foncé au survol */
+}
+
+.button--outline {
+  border: 2px solid #4F7942; /* Vert olive */
+  color: #4F7942;
+  background: transparent;
+}
+
+.button--outline:hover {
+  background-color: #4F7942;
+  color: white;
+}
