@@ -12,10 +12,9 @@ Nous avons réalisé une collecte d’images **directement sur le terrain**, dan
 - 📷 **Méthode** : Photos prises manuellement à différentes distances et angles  
 - ☀️ **Conditions** : Images prises à différents moments de la journée pour capturer des variations de lumière  
 
-<center>
-<img src="/img/MLops/collecte.jpg" alt="Collecte des images dans la ferme" width="350" />
-</center>
-
+<p align="center">
+  <img src={require('/static/img/MLops/collecte.jpg').default} alt="Image avant annotation" width="400px" />
+</p>
 - 🗃️ **Dataset existant** : ajout d’images provenant de **Roboflow**, déjà annotées.
 
 > Résultat : 📁 Environ 17 700 images brutes capturées
@@ -54,22 +53,24 @@ Pour entraîner un modèle de détection, les images ont été **annotées manue
 
 <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", flexWrap: "wrap" }}>
   <div style={{ textAlign: "center", width: "45%" }}>
-    <img src="/img/MLops/avantAnnotation.jpg" alt="Image brute avant annotation" style={{ maxWidth: "100%", borderRadius: "10px" }} />
+ 
+
+    <img src={require('/static/img/MLops/avantAnnotation.jpg').default} alt="Image brute avant annotation" style={{ maxWidth: "100%", borderRadius: "10px" }} />
     <p><strong>Image avant annotation</strong></p>
   </div>
   <div style={{ textAlign: "center", width: "45%" }}>
-    <img src="/img/MLops/apresAnnotation.jpg" alt="Image annotée dans Roboflow" style={{ maxWidth: "100%", borderRadius: "10px" }} />
+    <img src={require('/static/img/MLops/apresAnnotation.jpg').default}alt="Image annotée dans Roboflow" style={{ maxWidth: "100%", borderRadius: "10px" }} />
     <p><strong>Image après annotation (Roboflow)</strong></p>
   </div>
 </div>
 
 <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", flexWrap: "wrap", marginTop: "1rem" }}>
   <div style={{ textAlign: "center", width: "45%" }}>
-    <img src="/img/MLops/avantAnnotation2.jpg" alt="Image brute avant annotation" style={{ maxWidth: "100%", borderRadius: "10px" }} />
+    <img  src={require('/static/img/MLops/avantAnnotation2.jpg').default} alt="Image brute avant annotation" style={{ maxWidth: "100%", borderRadius: "10px" }} />
     <p><strong>Image avant annotation</strong></p>
   </div>
   <div style={{ textAlign: "center", width: "45%" }}>
-    <img src="/img/MLops/apres_annotation.jpg" alt="Image annotée dans Roboflow" style={{ maxWidth: "100%", borderRadius: "10px" }} />
+    <img  src={require('/static/img/MLops/apres_annotation.jpg').default} alt="Image annotée dans Roboflow" style={{ maxWidth: "100%", borderRadius: "10px" }} />
     <p><strong>Image après annotation (Roboflow)</strong></p>
   </div>
 </div>
