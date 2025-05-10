@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkstade_pheno=self.webpackChunkstade_pheno||[]).push([[1903],{1912:e=>{e.exports=JSON.parse('{"blogBasePath":"/stade-pheno/ar/blog","blogTitle":"Blog","authorsListPath":"/stade-pheno/ar/blog/authors"}')}}]);
