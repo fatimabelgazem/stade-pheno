@@ -1,5 +1,5 @@
 // @ts-check
-import {themes as prismThemes} from 'prism-react-renderer';
+import { themes as prismThemes } from 'prism-react-renderer';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -7,20 +7,30 @@ const config = {
   tagline: 'Détection des stades et prévision de rendement par computer vision et deep learning',
   favicon: 'img/favicon.ico',
 
-  // Mettre à jour les valeurs avec celles de votre compte GitHub
-  url: 'https://fatimabelgazem.github.io', // ✅ URL GitHub Pages
-  baseUrl: '/stade-pheno/',               // ✅ Nom du projet comme chemin (si nécessaire)
+  // ✅ URL GitHub Pages
+  url: 'https://fatimabelgazem.github.io',
+  baseUrl: '/stade-pheno/',
 
   onBrokenLinks: 'ignore',
   onBrokenMarkdownLinks: 'warn',
 
-  // Mettez à jour ces valeurs avec celles de votre compte
-  organizationName: 'fatimabelgazem',     // ✅ Votre utilisateur GitHub
-  projectName: 'stade-pheno',             // ✅ Le nom de votre dépôt
+  // ✅ Infos GitHub
+  organizationName: 'fatimabelgazem',
+  projectName: 'stade-pheno',
 
+  // 🌍 Internationalisation : Français par défaut + Arabe
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
+    defaultLocale: 'fr',
+    locales: ['fr', 'ar'],
+    localeConfigs: {
+      fr: {
+        label: 'Français',
+      },
+      ar: {
+        label: 'العربية',
+        direction: 'rtl',
+      },
+    },
   },
 
   presets: [
@@ -29,7 +39,7 @@ const config = {
       {
         docs: {
           sidebarPath: './sidebars.js',
-          editUrl: 'https://github.com/fatimabelgazem/stade-pheno/tree/main/', // ✅ Mettre à jour le lien d'édition
+          editUrl: 'https://github.com/fatimabelgazem/stade-pheno/tree/main/',
         },
         blog: {
           showReadingTime: true,
@@ -37,7 +47,7 @@ const config = {
             type: ['rss', 'atom'],
             xslt: true,
           },
-          editUrl: 'https://github.com/fatimabelgazem/stade-pheno/tree/main/', // ✅ Mettre à jour le lien d'édition
+          editUrl: 'https://github.com/fatimabelgazem/stade-pheno/tree/main/',
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
           onUntruncatedBlogPosts: 'warn',
@@ -66,7 +76,11 @@ const config = {
         },
         { to: '/blog', label: 'Blog', position: 'left' },
         {
-          href: 'https://github.com/fatimabelgazem/stade-pheno', // ✅ Mettre à jour le lien GitHub
+          type: 'localeDropdown', // 🌐 Menu de langue
+          position: 'right',
+        },
+        {
+          href: 'https://github.com/fatimabelgazem/stade-pheno',
           label: 'GitHub',
           position: 'right',
         },
@@ -84,7 +98,7 @@ const config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/fatimabelgazem/stade-pheno', // ✅ Mettre à jour le lien GitHub
+              href: 'https://github.com/fatimabelgazem/stade-pheno',
             },
           ],
         },
