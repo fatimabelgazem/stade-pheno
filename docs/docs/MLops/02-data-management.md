@@ -1,5 +1,4 @@
-# Gestion des données
-
+# 📸 2 - Gestion des données
 La première étape de tout projet MLOps consiste à bien gérer les données : les collecter, les nettoyer et les annoter. Voici comment cela a été réalisé pour le projet **PhénoRendement**.
 
 ---
@@ -67,7 +66,7 @@ Pour entraîner un modèle de détection, les images ont été **annotées manue
     <p><strong>Image avant annotation</strong></p>
   </div>
   <div style={{ textAlign: "center", width: "45%" }}>
-    <img  src={require('/static/img/MLops/apres_annotation2.jpg').default} alt="Image annotée dans Roboflow" style={{ maxWidth: "100%", borderRadius: "10px" }} />
+    <img  src={require('/static/img/MLops/apres_annotation.jpg').default} alt="Image annotée dans Roboflow" style={{ maxWidth: "100%", borderRadius: "10px" }} />
 
     <p><strong>Image après annotation (Roboflow)</strong></p>
   </div>

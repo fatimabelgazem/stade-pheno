@@ -1,4 +1,4 @@
-# 🚀 4 - Déploiement du Modèle
+# 🚀 5 - Déploiement du Modèle
 
 Cette section documente l'étape de déploiement de notre solution de détection d'objets pour les orangers, suivant la méthodologie MLOps.
 
@@ -58,11 +58,11 @@ Le modèle implémente une approche de "détection par patchs" pour traiter effi
 
 ### 🌐 Points de terminaison
 
-| Endpoint | Méthode | Description |
-|----------|---------|-------------|
-| `/` | GET | Page d'accueil confirmant que l'API est opérationnelle |
-| `/predict` | POST | Endpoint principal pour l'analyse d'images |
-| `/get_image/{filename}` | GET | Récupération des images de résultats annotées |
+|         Endpoint        |   Méthode   |                    Description                              |
+|-------------------------|-------------|-------------------------------------------------------------|
+| `/`                     |   GET       |    Page d'accueil confirmant que l'API est opérationnelle   |
+| `/predict`              |   POST      |    Endpoint principal pour l'analyse d'images               |
+| `/get_image/{filename}` |   GET       |    Récupération des images de résultats annotées            |
 
 ### ⚙️ Workflow de l'API
 

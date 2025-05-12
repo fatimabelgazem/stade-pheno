@@ -1,4 +1,4 @@
-# Entraînement du modèle
+# 🧠 3 - Entraînement du modèle
 Cette section détaille le processus d'entraînement du modèle de détection pour le projet **PhénoRendement**. Nous avons adopté une approche en deux étapes pour maximiser la précision tout en optimisant l'utilisation des ressources.
 
 ## 🧠 2.1 - Stratégie d'entraînement

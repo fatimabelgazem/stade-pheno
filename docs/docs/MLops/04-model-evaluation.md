@@ -1,4 +1,4 @@
-# 🧪 3 - Évaluation du Modèle
+# 🧪 4 - Évaluation du Modèle
 
 Cette section détaille le processus d'évaluation de notre modèle entraîné pour la détection des stades phénologiques des orangers. L'évaluation est une étape critique du cycle MLOps qui permet de valider les performances et la fiabilité du modèle avant son déploiement.
 

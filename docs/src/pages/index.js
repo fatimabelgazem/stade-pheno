@@ -25,7 +25,8 @@ export default function Home() {
             </div>
           </div>
           <div className={styles.rightImage}>
-            <img src="/img/agriculture-tech.jpg" alt="Oranger" />
+
+            <img src={require('/static/img/agriculture-tech.jpg').default} alt="Oranger" />
           </div>
         </div>
       </header>
