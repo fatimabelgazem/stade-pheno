@@ -1,60 +1,85 @@
-# 🚀 5 - Déploiement du Modèle
+# 🚀 5 - Déploiement du Système
 
-Cette section documente l'étape de déploiement de notre solution de détection d'objets pour les orangers, suivant la méthodologie MLOps.
+Cette section documente l'étape de déploiement de notre solution complète de détection phénologique des orangers, suivant la méthodologie MLOps.
 
-## 4.1 - Vue d'ensemble du projet
+## 5.1 - Vue d'ensemble du projet
 
-Notre système implémente une solution de vision par ordinateur pour détecter les oranges et évaluer le stade de développement des orangers, permettant ainsi d'estimer le rendement potentiel. Le système utilise un modèle YOLOv8 entraîné pour détecter différents stades de croissance des oranges et des arbres.
+Notre système implémente une solution de vision par ordinateur pour détecter et classifier les différents stades phénologiques des orangers (floraison, grossissement, maturation), permettant ainsi d'estimer le rendement potentiel et de suivre l'évolution temporelle des cultures. Le système utilise un modèle YOLOv8 personnalisé entraîné pour détecter les différents stades de développement des oranges.
 
-## 4.2 - Architecture du système déployé
+## 5.2 - Architecture du système déployé
 
 ### 📊 Composants principaux
 
-- **Modèle de détection** : YOLOv8 personnalisé (`best.pt`)
-- **API de service** : FastAPI
-- **Plateforme de déploiement** : Hugging Face Spaces
-- **Traitement d'image** : OpenCV, PyTorch
-- **Logique métier** : Détection par patchs et post-traitement
+- **Modèle de détection** : YOLOv8 personnalisé (`last32.pt`)
+- **API principale** : FastAPI pour la détection et prédiction (déployée sur Hugging Face)
+- **API dashboard** : FastAPI pour l'exposition des données analytiques (déployée sur Hugging Face)
+- **Base de données** : Supabase pour le stockage persistant
+- **Traitement d'image** : OpenCV, PyTorch, Ultralytics
+- **Visualisation** : Intégration Power BI via endpoints dédiés
 
 ### 🔄 Diagramme de l'architecture
 
-``` mermaid
+```mermaid
 graph LR
-    A[Image d'entrée] --> B[API FastAPI sur Hugging Face]
-    B --> C[Résultats]
+    A[Image d'entrée] --> B[API Principale - Hugging Face]
+    B --> C[Base Supabase]
+    C --> D[API Dashboard - Hugging Face]
+    D --> E[Power BI]
     
-    subgraph "API FastAPI"
-    D[Chargement du modèle YOLO]
-    E[Traitement par patchs]
-    F[NMS et annotation]
-    G[Classification du stade]
+    subgraph "API Principale (HF)"
+    F[Chargement modèle YOLO]
+    G[Détection par patchs]
+    H[NMS et annotation]
+    I[Classification stade]
+    J[Calcul rendement]
+    end
+    
+    subgraph "API Dashboard (HF)"
+    K[Données aplaties]
+    L[Statistiques]
+    M[Export CSV]
+    N[Évolution temporelle]
     end
     
     subgraph "Résultats"
-    H[Image annotée]
-    I[Comptage des objets]
-    J[Stade de l'arbre]
+    O[Image annotée]
+    P[Comptage par classe]
+    Q[Stade phénologique]
+    R[Rendement estimé]
     end
 ```
 
-## 4.3 - Modèle ML déployé
+## 5.3 - Modèle ML déployé
 
 ### 🧠 Caractéristiques du modèle
 
 - **Architecture** : YOLOv8
-- **Fichier de poids** : `best.pt`
-- **Classes détectées** : Diverses phases/objets liés aux orangers (selon `model.names`)
-- **Seuil de confiance** : 0.15
+- **Fichier de poids** : `last32.pt`
+- **Classes détectées** : 
+  - `flower` : Fleurs ouvertes
+  - `flower Fermee` : Fleurs fermées
+  - `green` : Fruits verts (grossissement)
+  - `mature` : Fruits mûrs
+  - `noisant` : Stade noisant
+- **Seuil de confiance** : 0.35
 
 ### 🔍 Stratégie de détection
 
-Le modèle implémente une approche de "détection par patchs" pour traiter efficacement des images de grande taille :
-- Découpage de l'image en zones de 600×600 pixels
+Le modèle implémente une approche de "détection par patchs" optimisée :
+- Découpage de l'image en zones de 800×800 pixels avec stride de 400
 - Traitement par lots des patchs (batch_size=8)
-- Application de NMS (Non-Maximum Suppression) avec un seuil IoU de 0.5
-- Filtrage des grandes détections (max_box_size=100)
+- Application de NMS avec un seuil IoU de 0.5
+- Filtrage des grandes détections (max_box_size=220)
 
-## 4.4 - API FastAPI
+<div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", flexWrap: "wrap" }}>
+  <div style={{ textAlign: "center", width: "85%" }}>
+    <img src={require('/static/img/MLops/api.jpg').default} alt="Exemple de prédiction 1" style={{ maxWidth: "95%", borderRadius: "10px" }} />
+    <p><strong>Approche par patchs</strong></p>
+  </div>
+ 
+</div>
+
+## 5.4 - API Principale (Hugging Face)
 
 ### 🌐 Points de terminaison
 
@@ -63,151 +88,235 @@ Le modèle implémente une approche de "détection par patchs" pour traiter effi
 | `/`                     |   GET       |    Page d'accueil confirmant que l'API est opérationnelle   |
 | `/predict`              |   POST      |    Endpoint principal pour l'analyse d'images               |
 | `/get_image/{filename}` |   GET       |    Récupération des images de résultats annotées            |
+| `/dashboard/stades_flat`|   GET       |    Données aplaties pour visualisations                     |
+| `/export/csv`           |   GET       |    Export CSV des données d'analyse                         |
 
-### ⚙️ Workflow de l'API
+### ⚙️ Workflow de l'API principale
 
-1. **Réception d'image** : L'API reçoit une image via un formulaire multipart
+1. **Réception d'image** : L'API reçoit une image via un formulaire multipart avec ID d'arbre optionnel
 2. **Prétraitement** : Sauvegarde temporaire et chargement avec OpenCV
-3. **Détection** : Application du modèle YOLO par patchs sur l'image
+3. **Détection par patchs** : Application du modèle YOLO sur l'image découpée
 4. **Post-traitement** : 
    - Application de NMS pour éliminer les détections redondantes
-   - Annotation de l'image avec les bounding boxes et étiquettes
+   - Annotation de l'image avec bounding boxes colorées
    - Comptage des objets par classe
-5. **Détermination du stade** : Analyse de la classe prédominante pour déterminer le stade de développement
-6. **Réponse** : Retour d'un JSON contenant l'URL de l'image annotée, le décompte des classes et le stade identifié
+5. **Classification du stade** : Détermination du stade phénologique dominant
+6. **Calcul du rendement** : Estimation basée sur les fruits détectés
+7. **Sauvegarde** : Stockage des détections et métadonnées dans Supabase
+8. **Réponse** : Retour d'un JSON complet avec toutes les informations
 
-### 📝 Format de réponse
+### 📝 Format de réponse de l'API principale
 
 ```json
 {
-    "image_url": "https://[base_url]/get_image/output_result.jpg",
+    "image_url": "https://[huggingface-url]/get_image/abc123.jpg",
     "class_counts": {
-        "flower": 10,
-        "green": 5,
-        "mature": 0
+        "flower": 15,
+        "flower Fermee": 8,
+        "green": 25,
+        "mature": 12,
+        "noisant": 3
+    },
+    "stade": "Grossissement",
+    "stade_id": "uuid-123",
+    "rendement_estime_kg": 12.4
+}
+```
+
+## 5.5 - API Dashboard (Hugging Face)
+
+### 🌐 Points de terminaison analytiques
+
+|         Endpoint                    |   Méthode   |                    Description                              |
+|-------------------------------------|-------------|-------------------------------------------------------------|
+| `/`                                 |   GET       |    Page d'accueil de l'API dashboard                        |
+| `/dashboard/stades_flat`            |   GET       |    Données aplaties pour Power BI                           |
+| `/export/csv`                       |   GET       |    Export CSV avec headers de disposition                    |
+| `/dashboard/stats`                  |   GET       |    Statistiques générales du système                        |
+| `/dashboard/rendement_par_arbre`    |   GET       |    Rendement détaillé par arbre                             |
+| `/dashboard/evolution_temporelle`   |   GET       |    Évolution temporelle des stades                          |
+
+### ⚙️ Workflow de l'API dashboard
+
+1. **Récupération des données** : Extraction depuis Supabase avec tri temporel
+2. **Transformation** : Aplatissement des données JSON pour analyse
+3. **Agrégation** : Calculs statistiques et regroupements
+4. **Format d'export** : Adaptation pour Power BI et exports CSV
+
+### 📊 Exemples de réponses analytiques
+
+#### Données aplaties
+```json
+{
+    "success": true,
+    "data": [
+        {
+            "arbre_id": "ARBRE001",
+            "date": "2024-01-15",
+            "stade": "Floraison",
+            "class": "flower",
+            "count": 15,
+            "total_detections": 45,
+            "rendement_estime_kg": 8.5
+        }
+    ]
+}
+```
+
+#### Statistiques générales
+```json
+{
+    "success": true,
+    "stats": {
+        "total_analyses": 156,
+        "arbres_uniques": 12,
+        "total_rendement_kg": 145.8,
+        "repartition_classes": {
+            "flower": 245,
+            "green": 189,
+            "mature": 67
+        }
     }
 }
 ```
 
-## 4.5 - Déploiement sur Hugging Face Spaces
+## 5.6 - Base de données Supabase
 
-### 🛠️ Configuration du déploiement
+### 🗄️ Structure des tables
 
-- **Type d'environnement** : Docker (CPU)
-- **Dépendances** : PyTorch, OpenCV, Ultralytics, FastAPI
-- **Stockage temporaire** : Utilisation du répertoire `/tmp` pour les fichiers temporaires
-- **Sécurité** : L'API valide les formats d'image et gère les exceptions
+#### Table `detection`
+- `id` : UUID unique
+- `jour` : Date de détection
+- `classe` : Classe détectée (flower, green, etc.)
+- `bbox` : Coordonnées JSON de la bounding box
+- `surface` : Surface de la détection
+- `confiance` : Score de confiance du modèle
+- `id_image` : Identifiant de l'image
+- `tracking_id` : ID de suivi (optionnel)
 
-### 📂 Fichiers requis pour le déploiement
+#### Table `stade`
+- `id` : UUID unique
+- `arbre_id` : Identifiant de l'arbre
+- `date` : Date d'analyse
+- `stade` : Stade phénologique dominant
+- `class_counts` : Comptage JSON par classe
+- `total_detections` : Nombre total de détections
+- `image_id` : Identifiant de l'image analysée
+- `timestamp` : Horodatage complet
+- `rendement_estime_kg` : Rendement estimé en kg
 
-- `app.py` : Le code de l'API FastAPI
-- `best.pt` : Le fichier de poids du modèle entraîné
-- `requirements.txt` : Liste des dépendances Python
-- `Dockerfile` : (Optionnel) Configuration Docker personnalisée
+## 5.7 - Logique de classification des stades
 
-## 4.6 - Optimisations techniques
-
-### 🔄 Traitement par patchs
-
-La méthode `predict_on_patches` découpe l'image en segments pour:
-- Gérer efficacement les images de haute résolution
-- Améliorer la détection de petits objets
-- Optimiser l'utilisation de la mémoire
-
-```python
-# Extrait de code clé
-def predict_on_patches(model, image, patch_size=600, stride=600, 
-                      conf_threshold=0.15, max_box_size=100, batch_size=8):
-    # ...découpage et traitement par lots...
-```
-
-### 🎯 Filtrage et NMS
-
-Élimination des détections redondantes:
-- Application de NMS (Non-Maximum Suppression) avec PyTorch
-- Filtrage des grandes détections pour éliminer les faux positifs
+### 🌱 Algorithme de détermination du stade
 
 ```python
-# Extrait de code clé
-keep_indices = nms(boxes_tensor, scores_tensor, iou_threshold=iou_threshold)
+# Logique de classification
+flower_total = class_counts.get("flower", 0) + class_counts.get("flower Fermee", 0)
+green = class_counts.get("green", 0)
+mature = class_counts.get("mature", 0)
+noisant = class_counts.get("noisant", 0)
+
+max_count = max(flower_total, green, mature, noisant)
+
+if max_count == flower_total:
+    stade = "Floraison"
+elif max_count == green:
+    stade = "Grossissement"
+elif max_count == mature:
+    stade = "Maturation"
+elif max_count == noisant:
+    stade = "Stade Noisant"
+else:
+    stade = "Aucun"
 ```
 
-### 💾 Gestion de la mémoire
+### 📈 Calcul du rendement
 
-- Traitement par lots (`batch_size=8`) pour optimiser l'utilisation GPU/CPU
-- Utilisation de fichiers temporaires pour limiter l'utilisation de la mémoire
+```python
+def calculer_rendement(class_counts):
+    green = class_counts.get("green", 0)
+    mature = class_counts.get("mature", 0)
+    return (green + mature) * 0.2  # Coefficient de conversion
+```
 
-## 4.7 - Considérations de mise en production
+## 5.8 - Optimisations techniques
 
-### ⚡ Performances
+### 🔄 Traitement par patchs optimisé
 
-- **Temps de traitement** : Variable selon la taille de l'image et le nombre de détections
-- **Consommation de ressources** : Principalement limitée par la mémoire disponible pour le traitement des grands patchs
+```python
+def predict_on_patches(model, image, patch_size=800, stride=400, 
+                      conf_threshold=0.35, max_box_size=220, batch_size=8):
+    # Découpage intelligent avec padding
+    # Traitement par lots pour optimiser les performances
+    # Filtrage des détections aberrantes
+```
 
-### ⚠️ Limites actuelles
+### 🎯 Post-traitement avancé
 
-- Temps de traitement potentiellement long pour les très grandes images
-- Dépendance à un stockage temporaire pour les fichiers intermédiaires
-- Utilisation de CPU pour l'inférence (possibilité d'optimisation GPU)
+- **NMS adaptatif** : Seuil IoU de 0.5 pour éliminer les doublons
+- **Filtrage spatial** : Élimination des détections trop grandes
+- **Codage couleur** : Attribution de couleurs fixes par classe pour cohérence visuelle
 
-### 🔧 Recommandations d'évolution
+### 💾 Gestion des données
 
-- **Mise en cache des résultats** : Implémentation d'un système de cache pour les requêtes répétées
-- **Parallélisation** : Distribution du traitement des patchs sur plusieurs cœurs/machines
-- **Optimisation du modèle** : Quantification ou distillation pour réduire la taille du modèle
-- **Système de file d'attente** : Implémentation d'un système de queue pour gérer les requêtes simultanées
+- **Sauvegarde atomique** : Transactions Supabase pour cohérence des données
+- **Métadonnées enrichies** : Stockage des informations contextuelles
+- **Indexation temporelle** : Optimisation des requêtes par date
 
-## 4.8 - Surveillance et maintenance
+## 5.9 - Déploiement sur Hugging Face
 
-### 📊 Métriques de surveillance
+### 🚀 Configuration du déploiement Hugging Face
 
-- **Taux de succès des prédictions** : Ratio de prédictions réussies
-- **Temps de réponse de l'API** : Latence moyenne par requête
-- **Utilisation des ressources** : CPU, mémoire, stockage
+#### Structure du projet pour Hugging Face Spaces
+```
+phenology-detection-system/
+├── app.py                 # API principale
+├── dashboard.py           # API dashboard
+├── requirements.txt       # Dépendances Python
+├── last32.pt             # Modèle YOLO
+├── .env                  # Variables d'environnement
+└── README.md             # Documentation du Space
+```
 
-### 🔄 Plan de maintenance
+#### Fichier `requirements.txt` pour Hugging Face
+```txt
 
-- **Mise à jour du modèle** : Procédure pour déployer de nouvelles versions du modèle
-- **Sauvegarde** : Plan de sauvegarde des modèles et configurations
-- **Validation** : Tests automatisés pour valider les mises à jour
 
-## 4.9 - Guide d'utilisation
 
-### 🖥️ Exemple de requête avec cURL
+fastapi
+uvicorn
+python-multipart
+numpy
+opencv-python-headless
+torch
+torchvision
+ultralytics==8.3.123  
+pymongo
+supabase
+
+```
+
+
+### 🔧 Avantages du déploiement Hugging Face
+
+- **Simplicité** : Déploiement direct depuis le repository
+- **Scalabilité** : Gestion automatique de la charge
+- **Disponibilité** : Haute disponibilité garantie
+- **Intégration** : Interface utilisateur automatique via Gradio
+- **Monitoring** : Logs et métriques intégrés
+- **Sécurité** : Gestion sécurisée des secrets
+
+### 📱 URLs de déploiement
 
 ```bash
-curl -X POST "https://[votre-espace-huggingface]/predict" \
-     -F "file=@chemin/vers/image_oranger.jpg"
+# API Principale
+https://fatimabelgazem-stadephenoaf.hf.space
+
+# API Dashboard
+https://fatimabelgazem-dashboardsf.hf.space
 ```
 
-### 🐍 Exemple de requête avec Python
 
-```python
-import requests
 
-url = "https://[votre-espace-huggingface]/predict"
-files = {"file": open("chemin/vers/image_oranger.jpg", "rb")}
-response = requests.post(url, files=files)
-result = response.json()
 
-print(f"Stade de l'arbre: {result['stade']}")
-print(f"Comptage des objets: {result['class_counts']}")
-print(f"URL de l'image annotée: {result['image_url']}")
-```
-
-### 🌐 Intégration dans une application web
-
-Le système peut être intégré dans une interface utilisateur web en:
-- Envoyant des images via des requêtes POST
-- Affichant l'image annotée retournée
-- Présentant les statistiques de comptage et le stade dans un tableau de bord
-
-## 4.10 - Résumé du déploiement
-
-|      Étape               |        Action réalisée                                   |
-|--------------------------|---------------------------------------------------|
-|  Modèle                  |  YOLOv8 fine-tuné sur notre dataset d'orangers    |
-|  API                     |  FastAPI pour l'exposition des fonctionnalités     |
-|  Optimisation            |  Détection par patchs et traitement par lots       |
-|  Plateforme              |  Hugging Face Spaces avec Docker                   |
-|  Résultat                |  API REST déployée et accessible via internet      |
+Le système est maintenant déployé sur **Hugging Face Spaces** avec une architecture cloud robuste permettant le suivi en temps réel de l'évolution phénologique des orangers avec une haute disponibilité et une scalabilité automatique.

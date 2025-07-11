@@ -7,24 +7,27 @@ const config = {
   tagline: 'Détection des stades et prévision de rendement par computer vision et deep learning',
   favicon: 'img/favicon.ico',
 
-  // ✅ URL GitHub Pages
   url: 'https://fatimabelgazem.github.io',
   baseUrl: '/stade-pheno/',
 
   onBrokenLinks: 'ignore',
   onBrokenMarkdownLinks: 'warn',
 
-  // ✅ Infos GitHub
   organizationName: 'fatimabelgazem',
   projectName: 'stade-pheno',
 
-  // 🌍 Internationalisation : Français par défaut + Arabe
+  // 🌍 Internationalisation : Français par défaut + Anglais + Arabe
   i18n: {
     defaultLocale: 'fr',
-    locales: ['fr', 'ar'],
+    locales: ['fr', 'en', 'ar'],
     localeConfigs: {
       fr: {
         label: 'Français',
+        direction: 'ltr',
+      },
+      en: {
+        label: 'English',
+        direction: 'ltr',
       },
       ar: {
         label: 'العربية',
@@ -78,6 +81,7 @@ const config = {
         {
           type: 'localeDropdown', // 🌐 Menu de langue
           position: 'right',
+          
         },
         {
           href: 'https://github.com/fatimabelgazem/stade-pheno',

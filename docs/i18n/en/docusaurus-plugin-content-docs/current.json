@@ -1,0 +1,14 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.tutorialSidebar.category.MLops": {
+    "message": "MLops",
+    "description": "The label for category MLops in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Prérequis techniques": {
+    "message": "Prérequis techniques",
+    "description": "The label for category Prérequis techniques in sidebar tutorialSidebar"
+  }
+}

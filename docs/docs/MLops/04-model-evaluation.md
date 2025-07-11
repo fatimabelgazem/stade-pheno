@@ -42,24 +42,28 @@ L'évaluation de notre modèle a donné d'excellents résultats sur le jeu de do
 
 | Métrique     | Valeur      | Description                                       |
 |--------------|-------------|---------------------------------------------------|
-|   mAP50      |  0.847      |  Précision moyenne à 50% IoU                      |
-|  mAP50-95    |  0.61       |  Précision moyenne entre 50% et 95% IoU           |
-|  Precision   |  0.84       |  Précision globale du modèle                      |
-|  Recall      |  0.823      |  Rappel global du modèle                          |
-|  F1-Score    |  0.87       |  Moyenne harmonique de la précision et du rappel  |
+|   mAP50      |  0.877      |  Précision moyenne à 50% IoU                      |
+|  mAP50-95    |  0.618      |  Précision moyenne entre 50% et 95% IoU           |
+|  Precision   |  0.87       |  Précision globale du modèle                      |
+|  Recall      |  0.81       |  Rappel global du modèle                          |
+|  F1-Score    |  0.84       |  Moyenne harmonique de la précision et du rappel  |
 
 ###  Performance par classe :
  
-|   Classe   |  Label  |  mAP50  |  Precision  |  Recall F1-Score  |
-|------------|---------|---------|-------------|-------------------|
-|   Flower   |    0    |  0.593  |    0.669    |       0.557       |
-|   Green    |    1    |  0.958  |    0.87     |       0.958       |
-|   Mature   |    2    |  0.99   |    0.982    |       0.978       |
+|   Classe        |  Label  |  mAP50  |  Precision  |  Recall           |
+|-----------------|---------|---------|-------------|-------------------|
+|   Flower        |    0    |  0.872  |    0.897    |       0.751       |
+|   Flower Fermee |    1    |  0.877  |    0.814    |       0.816       |
+|   Green         |    2    |  0.929  |    0.896    |       0.877       |
+|   Mature        |    3    |  0.886  |   0.952     |       0.83        |
+|   Noisant       |    4    |  0.823  |    0.79     |       0.778       |         
+
+
 
 
 ### 🔄 Matrice de confusion :
 <p align="center">
-  <img src={require('/static/img/MLops/confusion_matrix.jpg').default} alt="Matrice de confusion" width="500px" />
+  <img src={require('/static/img/MLops/Confusion Matrix.png').default} alt="Matrice de confusion" width="600px" />
 </p>
 
 La matrice de confusion montre une bonne classification pour toutes les classes, avec peu de confusions entre les différentes catégories.
@@ -70,14 +74,11 @@ La matrice de confusion montre une bonne classification pour toutes les classes,
 Pour une évaluation qualitative, nous avons observé les prédictions du modèle sur des images de test :
 
 <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", flexWrap: "wrap" }}>
-  <div style={{ textAlign: "center", width: "45%" }}>
-    <img src={require('/static/img/MLops/pred_example1.jpg').default} alt="Exemple de prédiction 1" style={{ maxWidth: "75%", borderRadius: "10px" }} />
-    <p><strong>Détection des fruits verts et des fruits matures</strong></p>
+  <div style={{ textAlign: "center", width: "65%" }}>
+    <img src={require('/static/img/MLops/merged_resul2.jpg').default} alt="Exemple de prédiction 1" style={{ maxWidth: "95%", borderRadius: "10px" }} />
+    <p><strong>Détection des fruits fruits matures,flower et flower fermee</strong></p>
   </div>
-  <div style={{ textAlign: "center", width: "45%" }}>
-    <img src={require('/static/img/MLops/pred_example2.jpg').default} alt="Exemple de prédiction 2" style={{ maxWidth: "100%", borderRadius: "10px" }} />
-    <p><strong>Détection de fruits mûrs</strong></p>
-  </div>
+ 
 </div>
 
  ### 🧪 Analyse des erreurs :
